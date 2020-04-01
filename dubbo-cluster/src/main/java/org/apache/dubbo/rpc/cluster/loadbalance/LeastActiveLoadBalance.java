@@ -86,7 +86,8 @@ public class LeastActiveLoadBalance extends AbstractLoadBalance {
                 // Accumulate the total weight of the least active invoker
                 totalWeight += afterWarmup;
                 // If every invoker has the same weight?
-                if (sameWeight && afterWarmup != firstWeight) {
+                if (sameWeight && i > 0
+                        && afterWarmup != firstWeight) {
                     sameWeight = false;
                 }
             }

@@ -40,9 +40,9 @@ public abstract class AbstractLoadBalance implements LoadBalance {
      * Calculate the weight according to the uptime proportion of warmup time
      * the new weight will be within 1(inclusive) to weight(inclusive)
      *
-     * @param uptime the uptime in milliseconds
-     * @param warmup the warmup time in milliseconds
-     * @param weight the weight of an invoker
+     * @param uptime 已启动的时间
+     * @param warmup 预热时间
+     * @param weight 配置的invoker的权重 0-100
      * @return weight which takes warmup into account
      */
     static int calculateWarmupWeight(int uptime, int warmup, int weight) {
@@ -65,8 +65,7 @@ public abstract class AbstractLoadBalance implements LoadBalance {
 
 
     /**
-     * Get the weight of the invoker's invocation which takes warmup time into account
-     * if the uptime is within the warmup time, the weight will be reduce proportionally
+     * 计算权重前需要考虑其预热状态和时间
      *
      * @param invoker    the invoker
      * @param invocation the invocation of this invoker
@@ -81,12 +80,15 @@ public abstract class AbstractLoadBalance implements LoadBalance {
         } else {
             weight = url.getMethodParameter(invocation.getMethodName(), WEIGHT_KEY, DEFAULT_WEIGHT);
             if (weight > 0) {
+                //获取服务提供者启动的时间戳
                 long timestamp = invoker.getUrl().getParameter(TIMESTAMP_KEY, 0L);
                 if (timestamp > 0L) {
+                    //如果时间戳大于当前时间 返回1??
                     long uptime = System.currentTimeMillis() - timestamp;
                     if (uptime < 0) {
                         return 1;
                     }
+                    //默认预热10min 或者自己配置
                     int warmup = invoker.getUrl().getParameter(WARMUP_KEY, DEFAULT_WARMUP);
                     if (uptime > 0 && uptime < warmup) {
                         weight = calculateWarmupWeight((int)uptime, warmup, weight);

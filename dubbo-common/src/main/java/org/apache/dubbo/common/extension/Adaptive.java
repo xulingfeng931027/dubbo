@@ -35,26 +35,17 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Adaptive {
     /**
-     * Decide which target extension to be injected. The name of the target extension is decided by the parameter passed
-     * in the URL, and the parameter names are given by this method.
-     * <p>
-     * If the specified parameters are not found from {@link URL}, then the default extension will be used for
-     * dependency injection (specified in its interface's {@link SPI}).
-     * <p>
-     * For example, given <code>String[] {"key1", "key2"}</code>:
-     * <ol>
-     * <li>find parameter 'key1' in URL, use its value as the extension's name</li>
-     * <li>try 'key2' for extension's name if 'key1' is not found (or its value is empty) in URL</li>
-     * <li>use default extension if 'key2' doesn't exist either</li>
-     * <li>otherwise, throw {@link IllegalStateException}</li>
-     * </ol>
-     * If the parameter names are empty, then a default parameter name is generated from interface's
-     * class name with the rule: divide classname from capital char into several parts, and separate the parts with
-     * dot '.', for example, for {@code org.apache.dubbo.xxx.YyyInvokerWrapper}, the generated name is
-     * <code>String[] {"yyy.invoker.wrapper"}</code>.
-     *
-     * @return parameter names in URL
+     * 确定要注入的目标扩展。目标扩展名由传递的参数决定URL中的参数，参数名称由该方法指定。
+     *      如果在{@link URL}中找不到指定的参数，则默认扩展名将用于
+     *      依赖项注入（在其接口的{@link SPI}中指定）。
+     *      例如，给定<code> String [] {“ key1”，“ key2”} </ code>：
+     *       <li>在URL中查找参数'key1'，将其值用作扩展名</ li>
+     *       <li>如果在URL中找不到“ key1”（或其值为空），请尝试使用“ key2”作为扩展名。</ li>
+     *       <li>如果'key2'也不存在，请使用默认扩展名</ li>
+     *       <li>否则，抛出{@link IllegalStateException} </ li>
+     *      如果参数名称为空，则从接口的类名的规则：将类名与大写字母分成几部分，并用
+     *     点“。”，例如，对于{@code org.apache.dubbo.xxx.YyyInvokerWrapper}，
+     * 生成的名称为yyy.invoker.wrapper
      */
     String[] value() default {};
-
 }

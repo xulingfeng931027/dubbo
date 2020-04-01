@@ -33,9 +33,9 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class RoundRobinLoadBalance extends AbstractLoadBalance {
     public static final String NAME = "roundrobin";
-    
+
     private static final int RECYCLE_PERIOD = 60000;
-    
+
     protected static class WeightedRoundRobin {
         private int weight;
         private AtomicLong current = new AtomicLong(0);
@@ -63,12 +63,12 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
 
     private ConcurrentMap<String, ConcurrentMap<String, WeightedRoundRobin>> methodWeightMap = new ConcurrentHashMap<String, ConcurrentMap<String, WeightedRoundRobin>>();
     private AtomicBoolean updateLock = new AtomicBoolean();
-    
+
     /**
      * get invoker addr list cached for specified invocation
      * <p>
      * <b>for unit test only</b>
-     * 
+     *
      * @param invokers
      * @param invocation
      * @return
@@ -81,7 +81,7 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
         }
         return null;
     }
-    
+
     @Override
     protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, URL url, Invocation invocation) {
         String key = invokers.get(0).getUrl().getServiceKey() + "." + invocation.getMethodName();
@@ -91,6 +91,14 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
         long now = System.currentTimeMillis();
         Invoker<T> selectedInvoker = null;
         WeightedRoundRobin selectedWRR = null;
+        /* 下面这个循环主要做了这样几件事情：
+           1. 遍历 Invoker 列表，检测当前 Invoker 是否有相应的 WeightedRoundRobin，没有则创建
+           2. 检测 Invoker 权重是否发生了变化，若变化了，则更新 WeightedRoundRobin 的 weight 字段
+           3. 让 current 字段加上自身权重，等价于 current += weight
+           4. 设置 lastUpdate 字段，即 lastUpdate = now
+           5. 寻找具有最大 current 的 Invoker，以及 Invoker 对应的 WeightedRoundRobin，暂存起来，留作后用
+           6. 计算权重总和
+        */
         for (Invoker<T> invoker : invokers) {
             String identifyString = invoker.getUrl().toIdentityString();
             int weight = getWeight(invoker, invocation);

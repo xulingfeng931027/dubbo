@@ -30,13 +30,14 @@ import java.util.concurrent.ThreadLocalRandom;
  * If the weights are different then it will use random.nextInt(w1 + w2 + ... + wn)
  * Note that if the performance of the machine is better than others, you can set a larger weight.
  * If the performance is not so good, you can set a smaller weight.
+ * 根据权重的随机算法,
  */
 public class RandomLoadBalance extends AbstractLoadBalance {
 
     public static final String NAME = "random";
 
     /**
-     * Select one invoker between a list using a random criteria
+     * Select one invoker between a list using a random criteria 按权重随机选择
      * @param invokers List of possible invokers
      * @param url URL
      * @param invocation Invocation
@@ -63,21 +64,23 @@ public class RandomLoadBalance extends AbstractLoadBalance {
             // Sum
             totalWeight += weight;
             if (sameWeight && weight != firstWeight) {
+                //判断所有节点的权重是否相同
                 sameWeight = false;
             }
         }
         if (totalWeight > 0 && !sameWeight) {
-            // If (not every invoker has the same weight & at least one invoker's weight>0), select randomly based on totalWeight.
+            // 先获取一个0-权重和之间的随机数
             int offset = ThreadLocalRandom.current().nextInt(totalWeight);
-            // Return a invoker based on the random value.
+            //例如三个权重分别为2,3,5 总和就是10  offset的期望是5
+            //平均下来就是2/10 3/10 5/10的几率
             for (int i = 0; i < length; i++) {
-                offset -= weights[i];
+                offset = offset - weights[i];
                 if (offset < 0) {
                     return invokers.get(i);
                 }
             }
         }
-        // If all invokers have the same weight value or totalWeight=0, return evenly.
+        // 所有调用者权重都一样或者为0  就随机一个
         return invokers.get(ThreadLocalRandom.current().nextInt(length));
     }
 

@@ -29,7 +29,7 @@ import java.util.List;
  * <p>
  * <a href="http://en.wikipedia.org/wiki/Directory_service">Directory Service</a>
  *
- * @see org.apache.dubbo.rpc.cluster.Cluster#join(Directory)
+ * @see Cluster#join(Directory)
  */
 public interface Directory<T> extends Node {
 

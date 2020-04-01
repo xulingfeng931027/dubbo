@@ -124,7 +124,7 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
      * @param loadbalance load balance policy
      * @param invocation  invocation
      * @param invokers    invoker candidates
-     * @param selected    exclude selected invokers or not
+     * @param selected    exclude selected invokers or not 排除的invoker集合
      * @return the invoker which will final to do invoke.
      * @throws RpcException exception
      */
@@ -135,7 +135,7 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
             return null;
         }
         String methodName = invocation == null ? StringUtils.EMPTY_STRING : invocation.getMethodName();
-
+       //处理粘滞连接相关配置,即一个请求多次尽可能的向同一个节点发起调用  适用于有状态的连接
         boolean sticky = invokers.get(0).getUrl()
                 .getMethodParameter(methodName, CLUSTER_STICKY_KEY, DEFAULT_CLUSTER_STICKY);
 
@@ -164,12 +164,13 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
         if (CollectionUtils.isEmpty(invokers)) {
             return null;
         }
+        //如果集群中只有一个invoker就直接返回
         if (invokers.size() == 1) {
             return invokers.get(0);
         }
         Invoker<T> invoker = loadbalance.select(invokers, getUrl(), invocation);
 
-        //If the `invoker` is in the  `selected` or invoker is unavailable && availablecheck is true, reselect.
+        //如果选出的invoker不可用或者被排除了
         if ((selected != null && selected.contains(invoker))
                 || (!invoker.isAvailable() && getUrl() != null && availablecheck)) {
             try {
@@ -242,7 +243,12 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
 
         return null;
     }
-
+    /**
+     * 核心方法 将多个invoker包装成一个invoker对客户端提供服务
+     * @param invocation
+     * @return
+     * @throws RpcException
+     */
     @Override
     public Result invoke(final Invocation invocation) throws RpcException {
         checkWhetherDestroyed();

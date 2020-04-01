@@ -31,5 +31,8 @@ public class SimpleExtImpl3 implements SimpleExt {
     public String bang(URL url, int i) {
         return "bang3";
     }
-
+//    @Override
+//    public void duang() {
+//
+//    }
 }

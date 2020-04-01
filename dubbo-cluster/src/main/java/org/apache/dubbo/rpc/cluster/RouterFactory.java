@@ -25,8 +25,8 @@ import org.apache.dubbo.common.extension.SPI;
  * <p>
  * <a href="http://en.wikipedia.org/wiki/Routing">Routing</a>
  *
- * @see org.apache.dubbo.rpc.cluster.Cluster#join(Directory)
- * @see org.apache.dubbo.rpc.cluster.Directory#list(org.apache.dubbo.rpc.Invocation)
+ * @see Cluster#join(Directory)
+ * @see Directory#list(org.apache.dubbo.rpc.Invocation)
  * <p>
  * Note Router has a different behaviour since 2.7.0, for each type of Router, there will only has one Router instance
  * for each service. See {@link CacheableRouterFactory} and {@link RouterChain} for how to extend a new Router or how

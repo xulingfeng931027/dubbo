@@ -34,4 +34,7 @@ public interface SimpleExt {
 
     // no @Adaptive
     String bang(URL url, int i);
+//@Adaptive
+//    void duang();
+
 }

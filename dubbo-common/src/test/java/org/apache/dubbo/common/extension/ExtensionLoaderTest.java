@@ -134,6 +134,9 @@ public class ExtensionLoaderTest {
     @Test
     public void test_getExtension_WithWrapper() throws Exception {
         WrappedExt impl1 = getExtensionLoader(WrappedExt.class).getExtension("impl1");
+        System.out.println(impl1.echo(URL.valueOf("ddd"), "dd"));
+        System.out.println(Ext5Wrapper1.echoCount.get());
+        System.out.println(Ext5Wrapper2.echoCount.get());
         assertThat(impl1, anyOf(instanceOf(Ext5Wrapper1.class), instanceOf(Ext5Wrapper2.class)));
 
         WrappedExt impl2 = getExtensionLoader(WrappedExt.class).getExtension("impl2");
@@ -439,6 +442,7 @@ public class ExtensionLoaderTest {
         Assertions.assertNull(injectExtImpl.getSimpleExt1());
         Assertions.assertNull(injectExtImpl.getGenericType());
     }
+
 
     @Test
     void testMultiNames() {

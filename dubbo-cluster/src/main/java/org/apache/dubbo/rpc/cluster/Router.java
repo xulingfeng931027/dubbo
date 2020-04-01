@@ -28,8 +28,8 @@ import java.util.List;
  * <p>
  * <a href="http://en.wikipedia.org/wiki/Routing">Routing</a>
  *
- * @see org.apache.dubbo.rpc.cluster.Cluster#join(Directory)
- * @see org.apache.dubbo.rpc.cluster.Directory#list(Invocation)
+ * @see Cluster#join(Directory)
+ * @see Directory#list(Invocation)
  */
 public interface Router extends Comparable<Router> {
 

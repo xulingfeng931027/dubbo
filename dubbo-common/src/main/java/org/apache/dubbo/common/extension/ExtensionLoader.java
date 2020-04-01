@@ -851,7 +851,7 @@ public class ExtensionLoader<T> {
                 }
             }
 
-            if (urls == null || !urls.hasMoreElements()) {
+            if(urls == null || !urls.hasMoreElements()) {
                 if (classLoader != null) {
                     urls = classLoader.getResources(fileName);
                 } else {
